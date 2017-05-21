@@ -1,0 +1,4 @@
+Foo bar!
+This is Text.
+This is also text.
+Next enter removes the dialog.
