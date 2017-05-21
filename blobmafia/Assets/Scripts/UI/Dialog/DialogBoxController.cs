@@ -20,8 +20,8 @@ public class DialogBoxController : MonoBehaviour
 
 	void Start ()
 	{
+		disableDialogBox ();
 		loadText ();
-		enableDialogBox ();
 	}
 
 	void Update ()
@@ -37,7 +37,7 @@ public class DialogBoxController : MonoBehaviour
 				currentLine++;
 
 				if (currentLine > lastLine) {
-					setDialogBoxActive (false);
+					disableDialogBox ();
 				} else {
 					StartCoroutine (typeText (textLines [currentLine]));
 				}
@@ -45,13 +45,25 @@ public class DialogBoxController : MonoBehaviour
 			} else if (typing && !cancelTyping) {
 				cancelTyping = true;
 			}
+
+			if (currentLine > lastLine) {
+				disableDialogBox ();
+			}
 		}
 	}
 
 	public void enableDialogBox ()
 	{
-		setDialogBoxActive (true);
+		dialogBox.gameObject.SetActive (true);
+		this.active = true;
+
 		StartCoroutine (typeText (textLines [currentLine]));
+	}
+
+	public void disableDialogBox ()
+	{
+		dialogBox.gameObject.SetActive (false);
+		this.active = false;
 	}
 
 	private void loadText ()
@@ -61,12 +73,6 @@ public class DialogBoxController : MonoBehaviour
 			currentLine = 0;
 			lastLine = textLines.Length - 1;
 		}
-	}
-
-	private void setDialogBoxActive (bool active)
-	{
-		dialogBox.SetActive (active);
-		this.active = active;
 	}
 
 	private IEnumerator typeText (string text)

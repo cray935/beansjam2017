@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerMovementController : MonoBehaviour
 {
 	public float maxSpeed = 10f;
+	public float maxJump = 1f;
 
 	private Rigidbody2D body;
 
@@ -17,7 +18,13 @@ public class PlayerMovementController : MonoBehaviour
 	void FixedUpdate ()
 	{
 		float move = Input.GetAxis ("Horizontal");
+		float jump = Input.GetAxis ("Jump");
 
-		body.velocity = new Vector2 (move * maxSpeed, body.velocity.y);
+		if (Input.GetKeyDown (KeyCode.Space)) {
+			body.velocity = new Vector2 (move * maxSpeed, jump * maxJump);
+		} else {
+			// Links und Rechts
+			body.velocity = new Vector2 (move * maxSpeed, body.velocity.y);
+		}
 	}
 }
