@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyFire : MonoBehaviour
+public class EnemyAI : MonoBehaviour
 {
 	public Rigidbody2D shotPrefab;
 	public Transform shootPos;
@@ -10,9 +10,18 @@ public class EnemyFire : MonoBehaviour
 	public float shootingRate = 1f;
 	public float viewDistance = 10f;
 	public float shootSpeed = 0.5f;
+	public float moveSpeed = 5f;
 
+	private Rigidbody2D body;
 	private float shootCooldown = 0f;
-	public bool looksLeft = false;
+	// Kann man ja später mal richtig implementieren..
+	private bool looksLeft = true;
+	private bool attackMode = false;
+
+	void Start ()
+	{
+		body = gameObject.GetComponent<Rigidbody2D> ();
+	}
 
 	void Update ()
 	{
@@ -25,9 +34,12 @@ public class EnemyFire : MonoBehaviour
 
 		RaycastHit2D hitinfo = Physics2D.Linecast (castStart, castEnd);
 
-		if (hitinfo.collider != null && hitinfo.collider.tag == "Player") {
+		attackMode = hitinfo.collider != null && hitinfo.collider.tag == "Player";
 
+		if (attackMode) {
 			Attack ();
+		} else {
+			Move ();
 		}
 	}
 
@@ -46,6 +58,12 @@ public class EnemyFire : MonoBehaviour
 			}
 
 		}
+	}
+
+	public void Move ()
+	{
+		// Gegner gucken nach links und laufen nach links!
+		body.velocity = new Vector2 (-1 * moveSpeed, body.velocity.y);
 	}
 
 	public bool CanAttack {
