@@ -40,7 +40,7 @@ public class PlayerAttackController : MonoBehaviour
 				Rigidbody2D clone = (Instantiate (shotPrefab, shootPos.position, shotPrefab.transform.rotation) as Rigidbody2D);
 				clone.AddForce (new Vector2 (-shootSpeed, 0), ForceMode2D.Force);
 			} else {
-				Rigidbody2D clone = (Instantiate (shotPrefab, transform.position + 1.0f * transform.forward, transform.rotation) as Rigidbody2D);
+				Rigidbody2D clone = (Instantiate (shotPrefab, shootPos.position, shotPrefab.transform.rotation) as Rigidbody2D);
 				clone.AddRelativeForce (new Vector2 (shootSpeed, 0), ForceMode2D.Force);
 			}
 
