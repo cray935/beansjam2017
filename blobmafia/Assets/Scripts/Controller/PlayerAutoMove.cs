@@ -2,51 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAutoMove : MonoBehaviour {
-
-    public PlayerMove moveScript;
-
-    public int movesMax = 10;
-
-    int moved = 0;
-
-    float timeleft = 5.0f;
-
-    bool stopMove = false;
-
-	// Use this for initialization
-	void Start () {
-
-        
-	}
+public class PlayerAutoMove : MonoBehaviour
+{
 	
-	// Update is called once per frame
-	void FixedUpdate () {
+	public float speed = 5;
+	public float timeleft = 1f;
 
-        if (stopMove)
-        {
-            return;
-        }
-        
-        if (timeleft > 0)
-        {
-            timeleft -= Time.deltaTime;
-            return;
-        }
+	private Rigidbody2D rb;
+	private bool stopped = false;
 
-        if (moved < movesMax)
-        {
-            moveScript.moveRight();
-            moved++;
-        }
+	void Start ()
+	{
+		rb = GetComponent<Rigidbody2D> ();
 	}
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.tag == "GohstWall")
-        {
-            stopMove = true;
-        }
-    }
+	void FixedUpdate ()
+	{
+		if (stopped) {
+			return;
+		}
 
+		if (timeleft > 0) {
+			timeleft -= Time.deltaTime;
+			return;
+		}
+
+		rb.velocity = new Vector2 (speed, rb.velocity.y);
+	}
+
+	void OnTriggerEnter2D (Collider2D collider)
+	{
+		if (collider.tag == "GohstWall")
+			stopped = true;
+	}
 }
