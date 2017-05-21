@@ -8,33 +8,50 @@ public class DialogBoxController : MonoBehaviour
 	public GameObject dialogBox;
 	public Text txtComponent;
 	public TextAsset textFile;
+	public float typeSpeedSec;
 
 	private string[] textLines;
 	private int currentLine;
 	private int lastLine;
 
-	// Use this for initialization
+	private bool active;
+	private bool typing;
+	private bool cancelTyping;
+
 	void Start ()
 	{
 		loadText ();
+		enableDialogBox ();
 	}
-	
-	// Update is called once per frame
+
 	void Update ()
 	{
-		if (currentLine > lastLine) {
+		if (!active) {
 			return;
 		}
 
-		txtComponent.text = textLines [currentLine];
-
 		if (Input.GetKeyDown (KeyCode.Return)) {
-			currentLine++;
-		}
 
-		if (currentLine > lastLine) {
-			dialogBox.SetActive (false);
+			if (!typing) {
+
+				currentLine++;
+
+				if (currentLine > lastLine) {
+					setDialogBoxActive (false);
+				} else {
+					StartCoroutine (typeText (textLines [currentLine]));
+				}
+
+			} else if (typing && !cancelTyping) {
+				cancelTyping = true;
+			}
 		}
+	}
+
+	public void enableDialogBox ()
+	{
+		setDialogBoxActive (true);
+		StartCoroutine (typeText (textLines [currentLine]));
 	}
 
 	private void loadText ()
@@ -44,7 +61,28 @@ public class DialogBoxController : MonoBehaviour
 			currentLine = 0;
 			lastLine = textLines.Length - 1;
 		}
+	}
 
-		dialogBox.SetActive (true);
+	private void setDialogBoxActive (bool active)
+	{
+		dialogBox.SetActive (active);
+		this.active = active;
+	}
+
+	private IEnumerator typeText (string text)
+	{
+		int letter = 0;
+		txtComponent.text = "";
+		typing = true;
+		cancelTyping = false;
+
+		while (typing && !cancelTyping && (letter < text.Length - 1)) {
+			txtComponent.text += text [letter++];
+			yield return new WaitForSeconds (typeSpeedSec);
+		}
+
+		txtComponent.text = text;
+		typing = false;
+		cancelTyping = false;
 	}
 }
